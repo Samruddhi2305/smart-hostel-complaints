@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Hostel Complaint Management System | BYOP 2026</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="index.css">
+</head>
+<body class="dark-theme">
+    <header class="app-header">
+        <div class="header-logo">
+            <i class="fa-solid fa-hotel logo-icon"></i>
+            <div class="logo-text">
+                <h1>SmartHostel</h1>
+                <span>IIT Roorkee Council Portal</span>
+            </div>
+        </div>
+        
+        <nav class="nav-tabs">
+            <button class="nav-tab active" data-tab="student-view">
+                <i class="fa-solid fa-user-graduate"></i> Student Portal
+            </button>
+            <button class="nav-tab" data-tab="council-view">
+                <i class="fa-solid fa-user-shield"></i> Council Board
+                <span class="badge badge-urgent" id="unread-count">0</span>
+            </button>
+            <button class="nav-tab" data-tab="dsa-view">
+                <i class="fa-solid fa-sitemap"></i> DSA Sandbox
+            </button>
+        </nav>
+        
+        <div class="header-status">
+            <span class="pulse-indicator"></span>
+            <span id="live-time">BYOP 2026</span>
+        </div>
+    </header>
+
+    <main class="app-content">
+        <!-- ========================================== -->
+        <!-- STUDENT VIEW -->
+        <!-- ========================================== -->
+        <section id="student-view" class="tab-panel active">
+            <div class="grid-2-1">
+                <div class="main-column">
+                    <!-- Profile Registration (Visible if not logged in) -->
+                    <div id="registration-card" class="glass-card">
+                        <div class="card-header">
+                            <i class="fa-solid fa-id-card card-icon text-cyan"></i>
+                            <h2>Student Portal Registration</h2>
+                        </div>
+                        <p class="card-desc">Enter your details to associate with complaints and chat with the Hostel Council.</p>
+                        <form id="registration-form" class="form-grid">
+                            <div class="form-group">
+                                <label for="student-name">Full Name</label>
+                                <input type="text" id="student-name" placeholder="Aarav Sharma" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="enrollment-no">Enrollment Number</label>
+                                <input type="text" id="enrollment-no" placeholder="23113045" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="student-hostel">Hostel (Bhawan)</label>
+                                <select id="student-hostel" required>
+                                    <option value="" disabled selected>Select Bhawan</option>
+                                    <option value="Rajendra Bhawan">Rajendra Bhawan</option>
+                                    <option value="Ravindra Bhawan">Ravindra Bhawan</option>
+                                    <option value="Radhakrishnan Bhawan">Radhakrishnan Bhawan</option>
+                                    <option value="Sarojini Bhawan">Sarojini Bhawan</option>
+                                    <option value="Kasturba Bhawan">Kasturba Bhawan</option>
+                                </select>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="student-block">Block / Wing</label>
+                                    <input type="text" id="student-block" placeholder="A-Block" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="student-room">Room Number</label>
+                                    <input type="text" id="student-room" placeholder="204" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">
+                                <i class="fa-solid fa-arrow-right-to-bracket"></i> Initialize Student Session
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- File Complaint Card (Visible when registered) -->
+                    <div id="complaint-card" class="glass-card hidden">
+                        <div class="card-header">
+                            <i class="fa-solid fa-pen-to-square card-icon text-violet"></i>
+                            <h2>Register a Smart Complaint</h2>
+                        </div>
+                        <form id="complaint-form">
+                            <div class="form-group">
+                                <label for="complaint-text">Describe your issue in detail</label>
+                                <textarea id="complaint-text" rows="4" placeholder="Tell us what is wrong. The system will automatically classify the department and severity..." required></textarea>
+                            </div>
+                            
+                            <!-- Real-time AI Assistant Panel -->
+                            <div id="ai-suggestion-box" class="ai-assistant-panel hidden">
+                                <div class="ai-header">
+                                    <i class="fa-solid fa-brain ai-icon"></i>
+                                    <span>AI Diagnostics Analysis</span>
+                                    <span class="ai-badge">Active</span>
+                                </div>
+                                <div class="ai-body">
+                                    <div class="ai-stat">
+                                        <span class="label">Detected Department:</span>
+                                        <strong id="ai-category" class="value text-cyan">-</strong>
+                                    </div>
+                                    <div class="ai-stat">
+                                        <span class="label">Priority Auto-Score:</span>
+                                        <span id="ai-priority" class="priority-pill pill-low">-</span>
+                                    </div>
+                                    <div class="ai-stat">
+                                        <span class="label">Confidence Score:</span>
+                                        <div class="progress-bar-container">
+                                            <div id="ai-confidence-bar" class="progress-bar" style="width: 0%"></div>
+                                        </div>
+                                        <span id="ai-confidence" class="value">0%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-violet btn-block">
+                                <i class="fa-solid fa-paper-plane"></i> File & Route Complaint
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Student Profile Sidebar -->
+                <div class="side-column">
+                    <div id="profile-card" class="glass-card hidden">
+                        <div class="profile-header">
+                            <div class="avatar"><i class="fa-solid fa-user"></i></div>
+                            <div class="profile-meta">
+                                <h3 id="profile-display-name">Aarav Sharma</h3>
+                                <span id="profile-display-id">#23113045</span>
+                            </div>
+                        </div>
+                        <div class="profile-details">
+                            <div class="detail-row">
+                                <span class="label">Hostel</span>
+                                <span class="value" id="profile-display-hostel">Rajendra Bhawan</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="label">Block & Room</span>
+                                <span class="value" id="profile-display-room">A-Block, Room 204</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-outline btn-block" id="logout-btn">
+                            <i class="fa-solid fa-sign-out-alt"></i> Exit Session
+                        </button>
+                    </div>
+
+                    <!-- My Active Tickets -->
+                    <div id="tickets-card" class="glass-card hidden">
+                        <div class="card-header">
+                            <i class="fa-solid fa-list-check card-icon text-cyan"></i>
+                            <h3>My Active Tickets</h3>
+                        </div>
+                        <div class="ticket-list" id="student-ticket-list">
+                            <!-- Injected by JS -->
+                            <p class="empty-state">No complaints registered yet.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- COUNCIL VIEW -->
+        <!-- ========================================== -->
+        <section id="council-view" class="tab-panel">
+            <!-- Council Stats -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-icon bg-violet-glow"><i class="fa-solid fa-clipboard-list text-violet"></i></div>
+                    <div class="stat-info">
+                        <span class="label">Total Registered</span>
+                        <h2 id="stat-total">0</h2>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon bg-red-glow"><i class="fa-solid fa-triangle-exclamation text-red"></i></div>
+                    <div class="stat-info">
+                        <span class="label">Urgent Priority</span>
+                        <h2 id="stat-urgent">0</h2>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon bg-cyan-glow"><i class="fa-solid fa-spinner text-cyan"></i></div>
+                    <div class="stat-info">
+                        <span class="label">In Progress</span>
+                        <h2 id="stat-pending">0</h2>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon bg-green-glow"><i class="fa-solid fa-circle-check text-green"></i></div>
+                    <div class="stat-info">
+                        <span class="label">Resolved Tickets</span>
+                        <h2 id="stat-resolved">0</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2-1">
+                <!-- Priority Queue Panel -->
+                <div class="main-column">
+                    <div class="glass-card flex-grow">
+                        <div class="card-header flex-between">
+                            <div class="header-title-group">
+                                <i class="fa-solid fa-layer-group card-icon text-violet"></i>
+                                <h2>Active Dispatch Queue</h2>
+                            </div>
+                            <span class="badge badge-info">DSA: Priority Queue (Max-Heap)</span>
+                        </div>
+                        <p class="card-desc">The dashboard automatically prioritizes urgent complaints first and resolves older requests to avoid starvation.</p>
+                        
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Complaint ID</th>
+                                        <th>Details</th>
+                                        <th>Hostel Details</th>
+                                        <th>Category</th>
+                                        <th>Priority</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="council-queue-tbody">
+                                    <!-- Injected by JS -->
+                                    <tr>
+                                        <td colspan="7" class="empty-table">No active complaints in the dispatch queue.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Council Charts & Analytics -->
+                <div class="side-column">
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <i class="fa-solid fa-chart-pie card-icon text-cyan"></i>
+                            <h3>Hostel Workload</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="hostelWorkloadChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <i class="fa-solid fa-chart-bar card-icon text-violet"></i>
+                            <h3>Category Distribution</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="categoryWorkloadChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- DSA PLAYGROUND -->
+        <!-- ========================================== -->
+        <section id="dsa-view" class="tab-panel">
+            <div class="dsa-dashboard-header">
+                <h2>Hostel DSA Architecture Playground</h2>
+                <p>Observe the live representation of data structures orchestrating the complaint system in real-time.</p>
+            </div>
+            
+            <div class="grid-3-columns">
+                <!-- 1. Binary Heap (Priority Queue) -->
+                <div class="glass-card dsa-card">
+                    <div class="card-header flex-between">
+                        <h3><i class="fa-solid fa-network-wired text-violet"></i> Binary Max-Heap</h3>
+                        <span class="dsa-badge">Priority Queue</span>
+                    </div>
+                    <p class="dsa-desc">Urgency codes: Urgent(4) > High(3) > Medium(2) > Low(1). Collisions sorted by oldest timestamp.</p>
+                    <div class="heap-visualizer-container" id="heap-visualizer">
+                        <!-- Re-rendered by JS -->
+                        <div class="empty-state">No complaints in the queue heap.</div>
+                    </div>
+                </div>
+
+                <!-- 2. Routing Graph -->
+                <div class="glass-card dsa-card flex-span-2">
+                    <div class="card-header flex-between">
+                        <h3><i class="fa-solid fa-route text-cyan"></i> Routing Network Graph</h3>
+                        <span class="dsa-badge">Dijkstra Shortest Path</span>
+                    </div>
+                    <p class="dsa-desc">Graph showing routing from Bhawans through central switches to target departments. Paths highlight dynamically.</p>
+                    <div class="graph-visualizer-container">
+                        <canvas id="graph-canvas" width="450" height="520"></canvas>
+                    </div>
+                </div>
+
+                <!-- 3. Hash Map -->
+                <div class="glass-card dsa-card">
+                    <div class="card-header flex-between">
+                        <h3><i class="fa-solid fa-table-list text-green"></i> Hash Map Storage</h3>
+                        <span class="dsa-badge">Bucket Chaining</span>
+                    </div>
+                    <p class="dsa-desc">Hash map index = hash(ID) % 10. Chaining handles collisions for instant O(1) complaint lookups.</p>
+                    <div class="hashmap-visualizer-container" id="hashmap-visualizer">
+                        <!-- Re-rendered by JS -->
+                        <div class="empty-state">Hash Map is currently empty.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ========================================== -->
+    <!-- INTERACTIVE CHAT & DETAIL MODAL -->
+    <!-- ========================================== -->
+    <div id="chat-modal" class="modal-overlay hidden">
+        <div class="glass-modal">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <span id="modal-ticket-id" class="ticket-id">#TICKET-101</span>
+                    <h2 id="modal-ticket-title">Leaking water faucet in bathroom</h2>
+                </div>
+                <button class="modal-close" id="close-modal-btn">&times;</button>
+            </div>
+            
+            <div class="modal-content-grid">
+                <!-- Left: Ticket Metadata & Actions -->
+                <div class="modal-info-column">
+                    <div class="info-group-card">
+                        <h4>Student Profile</h4>
+                        <div class="info-item">
+                            <span class="label">Name:</span>
+                            <span class="value" id="modal-student-name">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Enrollment:</span>
+                            <span class="value" id="modal-student-enrollment">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Bhawan / Room:</span>
+                            <span class="value" id="modal-student-location">-</span>
+                        </div>
+                    </div>
+
+                    <div class="info-group-card">
+                        <h4>Ticket Details</h4>
+                        <div class="info-item">
+                            <span class="label">Category:</span>
+                            <span class="value text-cyan" id="modal-ticket-category">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Urgency Score:</span>
+                            <span class="value" id="modal-ticket-priority">-</span>
+                        </div>
+                    </div>
+
+                    <div class="info-group-card">
+                        <h4>Admin Action Panel</h4>
+                        <div class="form-group">
+                            <label for="update-status-select">Current Status</label>
+                            <select id="update-status-select">
+                                <option value="Pending">Pending</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Resolved">Resolved</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="update-priority-select">Set Urgency Level</label>
+                            <select id="update-priority-select">
+                                <option value="Low">Low</option>
+                                <option value="Medium">Medium</option>
+                                <option value="High">High</option>
+                                <option value="Urgent">Urgent</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-success btn-block" id="save-modal-btn">
+                            <i class="fa-solid fa-save"></i> Save Changes & Dispatch
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right: Active Communication Thread -->
+                <div class="modal-chat-column">
+                    <div class="chat-header">
+                        <i class="fa-regular fa-comments"></i>
+                        <span>Live Discussion Thread</span>
+                    </div>
+                    <div class="chat-messages" id="chat-messages-container">
+                        <!-- Chat bubbles injected by JS -->
+                    </div>
+                    <form id="chat-input-form" class="chat-input-area">
+                        <textarea id="chat-message-text" rows="1" placeholder="Type a message or updates to the student..." required></textarea>
+                        <button type="submit" class="btn-send"><i class="fa-solid fa-paper-plane"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="ai.js"></script>
+    <script src="dsa.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

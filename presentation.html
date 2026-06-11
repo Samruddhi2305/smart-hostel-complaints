@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Hostel Complaint Management System | BYOP 2026</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-main: #0c0a15;
+            --bg-card: rgba(22, 19, 41, 0.7);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --color-violet: #8a2be2;
+            --color-cyan: #00f5d4;
+            --color-green: #70e000;
+            --color-red: #ff0054;
+            --color-orange: #ffb703;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #05040a;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Presentation Container */
+        .presentation {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 0;
+            gap: 3rem;
+        }
+
+        /* Slide Frame */
+        .slide {
+            width: 1024px;
+            height: 576px; /* 16:9 Aspect Ratio */
+            background-color: var(--bg-main);
+            background-image: 
+                radial-gradient(circle at 10% 15%, rgba(138, 43, 226, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 90% 85%, rgba(0, 245, 212, 0.08) 0%, transparent 40%);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 3rem;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+            page-break-after: always;
+        }
+
+        /* Header / Footer inside slides */
+        .slide-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .slide-header h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, #9ca3af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .slide-logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--color-cyan);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .slide-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .slide-footer {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+            padding-top: 0.8rem;
+            margin-top: 1.5rem;
+        }
+
+        /* Slide 1 Specific: Title */
+        .title-slide {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background-image: 
+                radial-gradient(circle at center, rgba(138, 43, 226, 0.2) 0%, transparent 60%);
+        }
+
+        .title-slide h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #fff, var(--color-cyan), var(--color-violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 15px rgba(138, 43, 226, 0.3));
+        }
+
+        .title-slide h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.35rem;
+            color: var(--color-cyan);
+            font-weight: 500;
+            margin-bottom: 2rem;
+        }
+
+        .student-details {
+            position: absolute;
+            bottom: 4rem;
+            left: 3rem;
+            text-align: left;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: var(--text-secondary);
+        }
+
+        .project-meta {
+            position: absolute;
+            bottom: 4rem;
+            right: 18rem;
+            text-align: left;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: var(--text-secondary);
+        }
+
+        .project-meta strong {
+            color: var(--text-primary);
+        }
+
+        .project-meta span {
+            color: var(--color-cyan);
+            font-weight: 600;
+            display: block;
+        }
+
+        /* Bullet lists and columns */
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .bullets-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            list-style: none;
+        }
+
+        .bullets-list li {
+            position: relative;
+            padding-left: 1.8rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text-secondary);
+        }
+
+        .bullets-list li strong {
+            color: var(--text-primary);
+        }
+
+        .bullets-list li::before {
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            top: 2px;
+        }
+
+        .problem-bullets li::before {
+            content: "\f00d";
+            color: var(--color-red);
+        }
+
+        .solution-bullets li::before {
+            content: "\f00c";
+            color: var(--color-green);
+        }
+
+        .feature-bullets li::before {
+            content: "\f058";
+            color: var(--color-cyan);
+        }
+
+        /* Core DSA Table Slide */
+        .dsa-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 0.5rem;
+        }
+
+        .dsa-table th, .dsa-table td {
+            padding: 0.8rem 1rem;
+            font-size: 0.9rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: top;
+        }
+
+        .dsa-table th {
+            background: rgba(255,255,255,0.02);
+            font-family: 'Outfit', sans-serif;
+            color: var(--color-cyan);
+            font-weight: 700;
+        }
+
+        .dsa-table td strong {
+            color: var(--text-primary);
+        }
+
+        .dsa-table td span {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* Info boxes */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.2rem;
+        }
+
+        .info-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            border-color: var(--color-violet);
+        }
+
+        .info-box i {
+            font-size: 1.4rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .info-box h4 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+
+        .info-box p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* Flowchart styling for Slide 4 */
+        .arch-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .flowchart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.01);
+            border: 1px dashed rgba(255,255,255,0.05);
+            padding: 1rem;
+            border-radius: 12px;
+        }
+
+        .flow-node {
+            background: var(--bg-card);
+            border: 1px solid var(--color-violet);
+            color: #fff;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .flow-split {
+            display: flex;
+            gap: 1rem;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .flow-node.highlight-cyan {
+            border-color: var(--color-cyan);
+        }
+
+        .flow-arrow {
+            color: var(--color-cyan);
+            font-size: 0.75rem;
+            margin: -2px 0;
+        }
+
+        /* Print Style Overrides to generate PDF cleanly */
+        @media print {
+            body {
+                background-color: #000;
+                background-image: none;
+            }
+            .presentation {
+                padding: 0;
+                gap: 0;
+            }
+            .slide {
+                border: none;
+                border-radius: 0;
+                box-shadow: none;
+                width: 100vw;
+                height: 100vh;
+                max-width: 100%;
+                max-height: 100%;
+                page-break-after: always;
+                box-sizing: border-box;
+            }
+            .print-btn {
+                display: none !important;
+            }
+        }
+
+        /* Floating action print button */
+        .print-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: linear-gradient(135deg, var(--color-cyan), #00b4d8);
+            color: #000;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(0, 245, 212, 0.4);
+            z-index: 500;
+            transition: all 0.2s ease;
+        }
+
+        .print-btn:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 20px rgba(0, 245, 212, 0.6);
+        }
+    </style>
+</head>
+<body>
+
+    <button class="print-btn" onclick="window.print()">
+        <i class="fa-solid fa-file-pdf"></i> Export to PDF
+    </button>
+
+    <div class="presentation">
+
+        <!-- SLIDE 1 -->
+        <section class="slide title-slide">
+            <div style="margin-top: -3rem;">
+                <h1>Smart Hostel Complaint Management System</h1>
+                <h3>IIT Roorkee Hostel Council Digital Infrastructure</h3>
+            </div>
+            
+            <div class="student-details">
+                <div style="font-weight: bold; margin-bottom: 0.2rem; color: var(--color-cyan)">Presenter Details:</div>
+                <div>Name: Diwase Samruddhi Sunil</div>
+                <div>Enrollment: 24119013</div>
+                <div>Branch: P&I '28</div>
+                <div>Email ID: diwase_ss@me.iitr.ac.in</div>
+                <div>Contact: 8605843937</div>
+            </div>
+
+            <div class="project-meta">
+                <div>Problem Domain:</div>
+                <strong>Hostel Administration & Student Services</strong>
+                <div style="margin-top: 0.5rem;">Key Technologies:</div>
+                <span>HTML / CSS / JavaScript</span>
+                <span>Data Structures & Algorithms</span>
+                <span>Dashboard Analytics</span>
+            </div>
+
+            <!-- IITR Logo on the bottom-right -->
+            <img src="iitr_logo.png" style="position: absolute; bottom: 4rem; right: 3.5rem; width: 125px; height: 125px; opacity: 0.85; filter: drop-shadow(0 0 12px rgba(0, 245, 212, 0.2));">
+
+            <div class="slide-footer" style="position: absolute; bottom: 1.5rem; left: 3rem; right: 3rem; border-top: 1px solid rgba(255, 255, 255, 0.03); padding-top: 0.8rem;">
+                <span>IIT Roorkee Open Projects 2026</span>
+                <span>1</span>
+            </div>
+        </section>
+
+        <!-- SLIDE 2 -->
+        <section class="slide">
+            <div class="slide-header">
+                <h2>Slide 2: Problem Understanding</h2>
+                <div class="slide-logo"><i class="fa-solid fa-hotel"></i> SmartHostel</div>
+            </div>
+            <div class="slide-content grid-2col">
+                <div>
+                    <h4 style="color: var(--color-cyan); font-family: 'Outfit'; margin-bottom: 0.5rem;">Existing Challenges</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.6rem;">Hostel residents frequently face issues related to:</p>
+                    <ul class="bullets-list problem-bullets" style="margin-bottom: 0.8rem;">
+                        <li>Wi-Fi outages & electrical failures</li>
+                        <li>Plumbing problems & cleanliness concerns</li>
+                        <li>Infrastructure maintenance bottlenecks</li>
+                    </ul>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.4;">Currently, complaints are managed through informal channels such as WhatsApp groups, phone calls, and manual registers.</p>
+                </div>
+                <div>
+                    <h4 style="color: var(--color-red); font-family: 'Outfit'; margin-bottom: 0.5rem;">Problems with Existing System</h4>
+                    <ul class="bullets-list problem-bullets" style="margin-bottom: 1rem; gap: 0.4rem;">
+                        <li>Complaints get lost or forgotten</li>
+                        <li>No prioritization mechanism (FIFO queues)</li>
+                        <li>Slow response times & lack of transparency</li>
+                        <li>No performance analytics or status tracking</li>
+                    </ul>
+                    
+                    <div style="background: rgba(22, 19, 41, 0.8); border: 1px solid var(--color-red); padding: 0.8rem; border-radius: 8px;">
+                        <span style="font-weight: 700; font-size: 0.8rem; color: var(--color-red); display: block; margin-bottom: 0.2rem; text-transform: uppercase;">Objective</span>
+                        <p style="font-size: 0.85rem; line-height: 1.4; color: var(--text-secondary);">Develop a centralized digital complaint management platform that intelligently routes, prioritizes, tracks, and analyzes hostel complaints.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>IIT Roorkee Open Projects 2026</span>
+                <span>2</span>
+            </div>
+        </section>
+
+        <!-- SLIDE 3 -->
+        <section class="slide">
+            <div class="slide-header">
+                <h2>Slide 3: Proposed Solution</h2>
+                <div class="slide-logo"><i class="fa-solid fa-hotel"></i> SmartHostel</div>
+            </div>
+            <div class="slide-content">
+                <p style="text-align: center; color: var(--text-secondary); font-size: 1rem; margin-bottom: 1.5rem; font-weight: 500;">Smart Hostel Complaint Management System consists of three major modules:</p>
+                <div class="info-grid">
+                    <div class="info-box">
+                        <i class="fa-solid fa-user-graduate text-cyan"></i>
+                        <h4>Student Portal</h4>
+                        <p>Allows students to register complaints, track status in real-time, view their complaint history, and receive active updates.</p>
+                    </div>
+                    <div class="info-box">
+                        <i class="fa-solid fa-user-shield text-violet"></i>
+                        <h4>Council Dashboard</h4>
+                        <p>Allows council members to view incoming complaints in prioritized order, manage lifecycle stages, and monitor hostel workloads.</p>
+                    </div>
+                    <div class="info-box">
+                        <i class="fa-solid fa-sitemap text-green"></i>
+                        <h4>DSA Sandbox</h4>
+                        <p>An educational visualizer showing exactly how Max-Heaps, Graphs, and Hash Maps operate behind the scenes to optimize the platform.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>IIT Roorkee Open Projects 2026</span>
+                <span>3</span>
+            </div>
+        </section>
+
+        <!-- SLIDE 4 -->
+        <section class="slide">
+            <div class="slide-header">
+                <h2>Slide 4: System Architecture</h2>
+                <div class="slide-logo"><i class="fa-solid fa-hotel"></i> SmartHostel</div>
+            </div>
+            <div class="slide-content arch-grid">
+                <!-- Flowchart -->
+                <div class="flowchart-container">
+                    <div class="flow-node">Student</div>
+                    <div class="flow-arrow"><i class="fa-solid fa-arrow-down"></i></div>
+                    <div class="flow-node">Complaint Registration</div>
+                    <div class="flow-arrow"><i class="fa-solid fa-arrow-down"></i></div>
+                    <div class="flow-node">Complaint Processing Engine</div>
+                    <div class="flow-arrow"><i class="fa-solid fa-arrow-down"></i></div>
+                    <div class="flow-split">
+                        <div class="flow-node highlight-cyan">Hash Map Storage</div>
+                        <div class="flow-node highlight-cyan">Priority Queue Scheduling</div>
+                    </div>
+                    <div class="flow-arrow"><i class="fa-solid fa-arrow-down"></i></div>
+                    <div class="flow-node">Routing Graph</div>
+                    <div class="flow-arrow"><i class="fa-solid fa-arrow-down"></i></div>
+                    <div class="flow-node">Concerned Department</div>
+                    <div class="flow-arrow"><i class="fa-solid fa-arrow-down"></i></div>
+                    <div class="flow-node">Resolution</div>
+                </div>
+                <!-- Core Workflow -->
+                <div>
+                    <h4 style="color: var(--color-cyan); font-family: 'Outfit'; margin-bottom: 0.5rem;">Core Workflow Steps</h4>
+                    <ol style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.6; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.4rem;">
+                        <li>Student submits complaint details.</li>
+                        <li>Processing Engine performs simulated NLP classification.</li>
+                        <li>Priority score (1-4) is assigned automatically based on keywords.</li>
+                        <li>Complaint enters the Max-Heap Priority Queue.</li>
+                        <li>Dijkstra's routing graph determines department route.</li>
+                        <li>Council processes complaint and chats with student.</li>
+                        <li>Status updates and messages are reflected to users in real-time.</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>IIT Roorkee Open Projects 2026</span>
+                <span>4</span>
+            </div>
+        </section>
+
+        <!-- SLIDE 5 -->
+        <section class="slide">
+            <div class="slide-header">
+                <h2>Slide 5: DSA Implementation Details</h2>
+                <div class="slide-logo"><i class="fa-solid fa-hotel"></i> SmartHostel</div>
+            </div>
+            <div class="slide-content">
+                <table class="dsa-table">
+                    <thead>
+                        <tr>
+                            <th>Data Structure</th>
+                            <th>Implementation & Purpose</th>
+                            <th>Complexities & Benefits</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>1. Priority Queue<br>(Max Heap)</strong></td>
+                            <td>Prioritize complaints based on severity.<br>
+                            - Urgent Plumbing -> Priority 4 | Wi-Fi Outage -> Priority 3<br>
+                            - Fan Repair -> Priority 2 | General Feedback -> Priority 1</td>
+                            <td><strong>Complexities:</strong> Insert: O(log n) | Delete: O(log n) | Peek: O(1)<br>
+                            <strong>Benefits:</strong> Fast scheduling. Urgent issues handled first.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2. Hash Map</strong></td>
+                            <td>Provides instant complaint lookup mapping ticket IDs to objects.<br>
+                            - COMP-2301 -> Complaint Details<br>
+                            - COMP-2302 -> Complaint Details</td>
+                            <td><strong>Complexities:</strong> Search: O(1) | Insert: O(1)<br>
+                            <strong>Benefits:</strong> Fast retrieval, efficient status tracking.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>3. Graph + Dijkstra</strong></td>
+                            <td>Route complaints to correct department nodes.<br>
+                            - Path traversal: Hostel -> Central Switch -> IT Department</td>
+                            <td><strong>Complexities:</strong> Dijkstra: O(E log V)<br>
+                            <strong>Benefits:</strong> Shortest path routing, future scalability.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="slide-footer">
+                <span>IIT Roorkee Open Projects 2026</span>
+                <span>5</span>
+            </div>
+        </section>
+
+        <!-- SLIDE 6 -->
+        <section class="slide">
+            <div class="slide-header">
+                <h2>Slide 6: User Interface & Features</h2>
+                <div class="slide-logo"><i class="fa-solid fa-hotel"></i> SmartHostel</div>
+            </div>
+            <div class="slide-content">
+                <div class="info-grid">
+                    <div class="info-box">
+                        <i class="fa-solid fa-graduation-cap text-cyan"></i>
+                        <h4>Student Portal</h4>
+                        <p style="font-size: 0.8rem; line-height: 1.4; color: var(--text-secondary); margin-top: 0.2rem;">
+                            • Student registration form<br>
+                            • AI auto-categorization<br>
+                            • Complaint submission log<br>
+                            • Personal tracking dashboard
+                        </p>
+                    </div>
+                    <div class="info-box">
+                        <i class="fa-solid fa-gears text-violet"></i>
+                        <h4>Council Dashboard</h4>
+                        <p style="font-size: 0.8rem; line-height: 1.4; color: var(--text-secondary); margin-top: 0.2rem;">
+                            • Active priority queue dispatch<br>
+                            • Priority manual override controls<br>
+                            • Complaint status updates<br>
+                            • Hostel workload overview
+                        </p>
+                    </div>
+                    <div class="info-box">
+                        <i class="fa-solid fa-chart-line text-green"></i>
+                        <h4>Analytics Dashboard</h4>
+                        <p style="font-size: 0.8rem; line-height: 1.4; color: var(--text-secondary); margin-top: 0.2rem;">
+                            • Total / pending / resolved stats<br>
+                            • Hostel caseload distribution<br>
+                            • Category workload bar charts<br>
+                            • Workload analytics graphs
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>IIT Roorkee Open Projects 2026</span>
+                <span>6</span>
+            </div>
+        </section>
+
+        <!-- SLIDE 7 -->
+        <section class="slide">
+            <div class="slide-header">
+                <h2>Slide 7: Results & Expected Impact</h2>
+                <div class="slide-logo"><i class="fa-solid fa-hotel"></i> SmartHostel</div>
+            </div>
+            <div class="slide-content">
+                <div class="info-grid">
+                    <div class="info-box" style="border-color: var(--color-green);">
+                        <i class="fa-solid fa-smile text-green"></i>
+                        <h4 style="color: #fff;">For Students</h4>
+                        <p style="font-size: 0.8rem; line-height: 1.4; color: var(--text-secondary); margin-top: 0.2rem;">
+                            • Faster complaint resolution<br>
+                            • Absolute operational transparency<br>
+                            • Real-time chat & tracking features
+                        </p>
+                    </div>
+                    <div class="info-box" style="border-color: var(--color-green);">
+                        <i class="fa-solid fa-users text-green"></i>
+                        <h4 style="color: #fff;">For Hostel Council</h4>
+                        <p style="font-size: 0.8rem; line-height: 1.4; color: var(--text-secondary); margin-top: 0.2rem;">
+                            • Better physical resource allocation<br>
+                            • Reduced complaint backlogs<br>
+                            • Data-driven dispatch decisions
+                        </p>
+                    </div>
+                    <div class="info-box" style="border-color: var(--color-green);">
+                        <i class="fa-solid fa-building-columns text-green"></i>
+                        <h4 style="color: #fff;">For Administration</h4>
+                        <p style="font-size: 0.8rem; line-height: 1.4; color: var(--text-secondary); margin-top: 0.2rem;">
+                            • Performance analytics monitoring<br>
+                            • Proactive infrastructure tracking<br>
+                            • Historical trend insights
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>IIT Roorkee Open Projects 2026</span>
+                <span>7</span>
+            </div>
+        </section>
+
+        <!-- SLIDE 8 -->
+        <section class="slide">
+            <div class="slide-header">
+                <h2>Slide 8: Future Scope & Conclusion</h2>
+                <div class="slide-logo"><i class="fa-solid fa-hotel"></i> SmartHostel</div>
+            </div>
+            <div class="slide-content grid-2col" style="align-items: center;">
+                <div>
+                    <h4 style="color: var(--color-cyan); font-family: 'Outfit'; margin-bottom: 0.5rem;">Future Scope</h4>
+                    <ul class="bullets-list feature-bullets" style="gap: 0.5rem; font-size: 0.85rem;">
+                        <li><strong>AI Classification:</strong> Automatically route Wi-Fi, electrical, and plumbing issues using NLP.</li>
+                        <li><strong>Mobile Application:</strong> Android & iOS support for on-the-go attachments.</li>
+                        <li><strong>Alert System:</strong> SMS alerts, email triggers, and push updates.</li>
+                        <li><strong>Predictive Maintenance:</strong> Find repeating grid failures before they occur.</li>
+                    </ul>
+                </div>
+                
+                <div style="background: rgba(22, 19, 41, 0.8); border: 1.5px solid var(--color-cyan); padding: 1.2rem; border-radius: 12px;">
+                    <span style="font-weight: 800; font-size: 0.9rem; color: #fff; display: block; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px;">Conclusion</span>
+                    <p style="font-size: 0.85rem; line-height: 1.5; color: var(--text-secondary);">
+                        The Smart Hostel Complaint Management System transforms traditional hostel complaint handling into a data-driven, transparent, and efficient workflow.<br><br>
+                        By integrating Priority Queues, Hash Maps, and Graph Algorithms into real-world operations, the system not only improves complaint resolution but also demonstrates the practical application of DSA in solving campus-scale administrative challenges.
+                    </p>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>IIT Roorkee Open Projects 2026</span>
+                <span>8</span>
+            </div>
+        </section>
+
+    </div>
+
+</body>
+</html>
